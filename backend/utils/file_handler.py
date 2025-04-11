@@ -1,28 +1,40 @@
-import zipfile
-import tempfile
+# file_handler.py
 import os
+from zipfile import ZipFile
+from utils.config import IGNORE_EXTENSIONS, IGNORE_DIRS
 
-IGNORE_LIST = ['.env', 'node_modules', '.git', '__pycache__', 'dist', 'build']
+# Function to check if a file should be ignored
 
-async def handle_uploaded_zip(file):
-    with tempfile.TemporaryDirectory() as tmpdir:
-        zip_path = os.path.join(tmpdir, file.filename)
-        with open(zip_path, "wb") as buffer:
-            buffer.write(await file.read())
+def should_ignore(file_path: str) -> bool:
+    # Normalize path for cross-platform compatibility
+    file_path = file_path.replace("\\", "/")
+    
+    # Ignore if any parent folder matches
+    for folder in file_path.split("/"):
+        if folder in IGNORE_DIRS:
+            return True
 
-        with zipfile.ZipFile(zip_path, 'r') as zip_ref:
-            zip_ref.extractall(tmpdir)
+    # Ignore if file has undesired extension
+    for ext in IGNORE_EXTENSIONS:
+        if file_path.endswith(ext):
+            return True
 
-        files = []
-        for root, dirs, filenames in os.walk(tmpdir):
-            dirs[:] = [d for d in dirs if d not in IGNORE_LIST]
-            for name in filenames:
-                if any(ignored in name for ignored in IGNORE_LIST):
-                    continue
-                full_path = os.path.join(root, name)
-                rel_path = os.path.relpath(full_path, tmpdir)
-                if not rel_path.endswith(".zip"):
-                    files.append(rel_path)
+    return False
 
-
-        return {"extracted_files": files}
+# Refactored function for handling uploaded ZIP files
+async def handle_uploaded_zip(file) -> dict:
+    file_path = f"/tmp/{file.filename}"
+    
+    # Save the uploaded zip file
+    with open(file_path, "wb") as f:
+        f.write(file.file.read())
+    
+    # Extract the zip file and filter out ignored files
+    extracted_files = []
+    with ZipFile(file_path, "r") as zip_ref:
+        for zip_file in zip_ref.namelist():
+            if not should_ignore(zip_file):
+                zip_ref.extract(zip_file, "/tmp/")
+                extracted_files.append(zip_file)
+    
+    return {"extracted_files": extracted_files}
