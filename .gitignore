@@ -1,3 +1,36 @@
-__pycache__
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
 
-venv
+# Virtual environment
+venv/
+env/
+ENV/
+.venv/
+.lib/
+Lib/
+Scripts/
+
+# Installer logs
+pip-log.txt
+pip-delete-this-directory.txt
+
+# Distribution / packaging
+build/
+dist/
+*.egg-info/
+*.egg
+
+# PyInstaller
+*.manifest
+*.spec
+
+# IDEs and editors
+.vscode/
+.idea/
+*.swp
+
+Include
+Lib
+Scripts

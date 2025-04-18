@@ -1,31 +1,41 @@
-from fastapi import FastAPI, UploadFile, File, Form, Request
-from fastapi.responses import JSONResponse
-from utils.file_handler import handle_uploaded_zip
-from utils.repo_handler import handle_github_clone
-from schemas.schemas import RepoCloneRequest
-from utils.readme_generator import generate_readme_summary
+# main.py
+from models import Task
+from fastapi import FastAPI
 
-from utils.ai_handler import generate_readme
+
 
 app = FastAPI()
 
+todolist=[]
+
 @app.get("/")
-def read_root():
-    return {"message": "AI README Generator backend running"}
+async def root():
+    return {"message": "Hello World"}
 
-@app.post("/upload-zip")
-async def upload_zip(file: UploadFile = File(...)):
-    result = await handle_uploaded_zip(file)
-    return JSONResponse(content=result)
+@app.post("/tasks/")
+async def create_task(task: Task):
+    if len(todolist) > 0:
+        last = todolist[-1]
+        task.id = last.id + 1
+    todolist.append(task)
+    return task
 
-@app.post("/repo-clone")
-async def repo_clone(body: RepoCloneRequest):
-    result = handle_github_clone(body.url)
-    return JSONResponse(content=result)
-    
+@app.get("/tasks/")
+async def get_tasks():
+    return todolist
 
-@app.post("/generate-readme")
-async def generate_readme_endpoint(code_summary: str):
-    readme = generate_readme(code_summary)
-    return JSONResponse(content={"readme": readme})
+@app.delete("/tasks/{task_id}")
+async def delete_task(task_id: int):
+    for todo in todolist:
+        if task_id == todo.id:
+            todolist.remove(todo)
+            return {"message": "Task deleted successfully"}
+    return {"message": "Task not found"}
 
+@app.put("/tasks/{task_id}")
+async def update_status(task_id: int, task_status: bool):
+    for todo in todolist:
+        if task_id == todo.id:
+            todo.completed = task_status
+            return {"message": "Task updated"}
+    return {"message": "Task not found"}
