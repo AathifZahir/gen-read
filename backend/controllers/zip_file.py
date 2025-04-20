@@ -8,16 +8,29 @@ import os
 # also invoke ai function by sending unique name
 # handle errors
 
+exclude_list = ["node_modules", ".git"]
+
+
 def main():
     try:
-        with zipfile.ZipFile('./backend/controllers/snap-link.zip') as file:
-            print("Ok")
-
+        if zipfile.is_zipfile('./backend/controllers/snap-link.zip'):
+            with zipfile.ZipFile('./backend/controllers/snap-link.zip', "r") as file:
+                for filename in file.namelist():
+                    if any(exclude in filename for exclude in exclude_list):
+                        continue
+                    else:
+                        print(filename)
+                        print(file.read(filename))
+                        
+                        
+        else:
+            print("File is not a zip file")
+       # with zipfile.ZipFile('./backend/controllers/snap-link.zip') as file:                        
 
             # ZipFile.namelist() returns a list containing all the members with names of an archive file
-            print(file.namelist()[-1])
+            #print(file.namelist()[-1])
 
-            
+            #file.printdir()
 
             # ZipFile.getinfo(path = filepath) returns the information about a member of Zip file.
             # It raises a KeyError if it doesn't contain the mentioned file
