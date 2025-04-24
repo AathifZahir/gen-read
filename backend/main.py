@@ -1,41 +1,29 @@
 # main.py
-from models import Task
-from fastapi import FastAPI
+from fastapi import FastAPI, File, UploadFile
+from controllers.zip_file import zipper
+import os
+import aiofiles
+from datetime import datetime
 
+CHUNK_SIZE = 1024 * 1024
 
 
 app = FastAPI()
 
-todolist=[]
 
 @app.get("/")
 async def root():
     return {"message": "Hello World"}
 
-@app.post("/tasks/")
-async def create_task(task: Task):
-    if len(todolist) > 0:
-        last = todolist[-1]
-        task.id = last.id + 1
-    todolist.append(task)
-    return task
 
-@app.get("/tasks/")
-async def get_tasks():
-    return todolist
-
-@app.delete("/tasks/{task_id}")
-async def delete_task(task_id: int):
-    for todo in todolist:
-        if task_id == todo.id:
-            todolist.remove(todo)
-            return {"message": "Task deleted successfully"}
-    return {"message": "Task not found"}
-
-@app.put("/tasks/{task_id}")
-async def update_status(task_id: int, task_status: bool):
-    for todo in todolist:
-        if task_id == todo.id:
-            todo.completed = task_status
-            return {"message": "Task updated"}
-    return {"message": "Task not found"}
+@app.post("/zip")
+async def zipfile(file: UploadFile = File(...)):
+    filepath = os.path.join(
+        "./temp",
+        os.path.basename(datetime.now().strftime("%Y%m%d%H%M%S") + file.filename),
+    )
+    async with aiofiles.open(filepath, "wb") as f:
+        while chunk := await file.read(CHUNK_SIZE):
+            await f.write(chunk)
+    url = "./backend" + filepath[1:]
+    return zipper(url)
