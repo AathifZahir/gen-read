@@ -25,5 +25,6 @@ async def zipfile(file: UploadFile = File(...)):
     async with aiofiles.open(filepath, "wb") as f:
         while chunk := await file.read(CHUNK_SIZE):
             await f.write(chunk)
-    url = "./backend" + filepath[1:]
-    return zipper(url)
+    filepath = filepath.replace("\\", "/")
+    print(filepath)
+    return zipper(filepath)
