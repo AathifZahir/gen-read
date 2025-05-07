@@ -19,7 +19,7 @@ async def root():
 @app.post("/zip")
 async def zipfile(file: UploadFile = File(...)):
     filepath = os.path.join(
-        "./temp",
+        "./temp/zips",
         os.path.basename(datetime.now().strftime("%Y%m%d%H%M%S") + file.filename),
     )
     async with aiofiles.open(filepath, "wb") as f:
