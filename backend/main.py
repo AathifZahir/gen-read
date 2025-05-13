@@ -2,6 +2,7 @@
 from fastapi import FastAPI, File, UploadFile
 from controllers.zip_file import zipper
 from controllers.repo_file import repoFile
+from controllers.ai_transform import gemini_transform
 import os
 import aiofiles
 from datetime import datetime
@@ -35,4 +36,7 @@ async def zipfile(file: UploadFile = File(...)):
 async def repofile(url):
     txt = repoFile(url)
     print(txt)
-    return txt
+    return gemini_transform(txt)
+
+
+# add a method for custom input by user
