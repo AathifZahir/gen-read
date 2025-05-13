@@ -25,6 +25,8 @@ include_list = [
     ".md",  # Markdown files
 ]
 
+txt = ""
+
 
 def print_repo_files(repo_url):
     repo_name = repo_url.split("/")[-1].split(".")[0]
@@ -42,8 +44,7 @@ def print_repo_files(repo_url):
         # Get the latest commit
         head_commit = repo.head.commit
         # Traverse the repository tree
-        txt = print_tree(head_commit.tree)
-        return txt
+        print_tree(head_commit.tree)
     except Exception as e:
         print(f"An error occurred: {e}")
 
@@ -56,7 +57,7 @@ def print_tree(tree, indent=""):
         tree (git.objects.tree.Tree): Git tree object.
         indent (str): Indentation for printing.
     """
-    txt = ""
+    global txt
     for item in tree:
         txt += item.abspath.split("repos\\")[-1]
         print(f"{item.abspath.split('repos\\')[-1]}")
@@ -69,9 +70,8 @@ def print_tree(tree, indent=""):
             blob = item.data_stream.read().decode("utf-8")
             print(f"{blob}")
             txt += blob
-    return txt
 
 
 def repoFile(url):
-    txt = print_repo_files(url)
+    print_repo_files(url)
     return txt
