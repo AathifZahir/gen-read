@@ -11,8 +11,9 @@ def gemini_transform(txt):
         a list of key features, the technologies used (tech stack), setup and installation instructions, 
         usage guidelines with example commands, any configuration or environment variables required, 
         API documentation (if applicable), instructions for contributing, the license type, and contact information. 
-        Format it using Markdown and include appropriate code blocks for installation and usage. Use this code 
-        \n {txt}""",
+        Format it using Markdown and include appropriate code blocks for installation and usage. 
+        The markdown should be properly formated to be used in github readme. Use this code 
+        {txt}""",
     )
-    print(response.text)
-    return response.text
+    readme_response = response.text.replace("\n", "<br>")
+    return readme_response

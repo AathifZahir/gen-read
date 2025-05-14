@@ -29,13 +29,20 @@ async def zipfile(file: UploadFile = File(...)):
             await f.write(chunk)
     filepath = filepath.replace("\\", "/")
     print(filepath)
-    return zipper(filepath)
+    txt = zipper(filepath)
+    print(txt)
+    return gemini_transform(txt)
 
 
 @app.post("/repo")
 async def repofile(url):
     txt = repoFile(url)
     print(txt)
+    return gemini_transform(txt)
+
+
+@app.post("/gemini")
+async def geminiapi(txt):
     return gemini_transform(txt)
 
 
