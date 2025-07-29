@@ -1,9 +1,17 @@
+"use client";
+
 import { Button } from "@/components/ui/button";
+import generator from "./generator/page";
+import { useRouter } from "next/navigation";
 
 export default function Home() {
+  const router = useRouter();
+  function handleStart() {
+    router.push("/generator");
+  }
   return (
-    <div>
-      <div className="text-center m-10 space-y-10">
+    <div className="h-full flex items-center justify-center">
+      <div className="text-center m-20 space-y-10">
         <div className="font-bitcount text-3xl">
           Generate Professional READMEs
         </div>
@@ -12,7 +20,7 @@ export default function Home() {
           structured and informative README.md files in seconds. Focus on
           coding, let AI handle the documentation.
         </div>
-        <Button>Get Started</Button>
+        <Button onClick={handleStart}>Get Started</Button>
       </div>
     </div>
   );
