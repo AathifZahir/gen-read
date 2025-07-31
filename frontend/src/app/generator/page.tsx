@@ -1,4 +1,5 @@
 import { Button } from "@/components/ui/button";
+import Upload from "@/utils/Uploader";
 
 export default function generator() {
   return (
@@ -17,7 +18,7 @@ export default function generator() {
               <div className="mx-2 text-muted-foreground">OR</div>
               <div className="h-[1px] bg-gradient-to-l from-transparent to-gray-300 flex-grow"></div>
             </div>
-            <Button className="w-full">Upload Zip</Button>
+            <Upload />
           </div>
           <Button className="w-full">Submit</Button>
         </form>

@@ -3,12 +3,17 @@ import {
   Inter,
   Bitcount_Grid_Double,
   Playfair_Display,
+  Geist,
 } from "next/font/google";
 import "./globals.css";
 import Header from "@/components/header";
 import Footer from "@/components/footer";
 
 const inter = Inter({
+  subsets: ["latin"],
+});
+
+const giest = Geist({
   subsets: ["latin"],
 });
 
@@ -32,7 +37,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" className="h-full">
-      <body className={`${inter.className} antialiased h-full flex flex-col`}>
+      <body className={`${giest.className} antialiased h-full flex flex-col`}>
         <Header />
         <main className="flex-1">{children}</main>
         <Footer />
