@@ -5,12 +5,35 @@ import { cn } from "@/lib/utils";
 import { useCallback } from "react";
 import { useDropzone } from "react-dropzone";
 
-export default function Upload() {
-  const onDrop = useCallback((acceptedFiles: File[]) => {
-    // Do something with the files
-    console.log(acceptedFiles);
-  }, []);
-  const { getRootProps, getInputProps, isDragActive } = useDropzone({ onDrop });
+interface UploadProps {
+  onFileSelect: (file: File) => void;
+}
+
+export default function Upload({ onFileSelect }: UploadProps) {
+  const onDrop = useCallback(
+    (acceptedFiles: File[]) => {
+      console.log(acceptedFiles);
+      if (acceptedFiles.length > 0) {
+        const zipFile = acceptedFiles[0];
+        if (
+          zipFile.type === "application/zip" ||
+          zipFile.name.endsWith(".zip")
+        ) {
+          onFileSelect(zipFile);
+        } else {
+          alert("Please select a zip file");
+        }
+      }
+    },
+    [onFileSelect]
+  );
+
+  const { getRootProps, getInputProps, isDragActive } = useDropzone({
+    onDrop,
+    accept: { "application/zip": [".zip"] },
+    multiple: false,
+    maxFiles: 1,
+  });
 
   return (
     <div
@@ -29,7 +52,7 @@ export default function Upload() {
           <p className="text-muted-foreground font-regular text-xs mb-6">
             or click to browse(.zip only)
           </p>
-          <Button>Select File</Button>
+          <Button type="button">Select File</Button>
         </div>
       ) : (
         <div className="flex flex-col items-center justify-center">
@@ -39,7 +62,9 @@ export default function Upload() {
           <p className="text-muted-foreground font-regular text-xs mb-6">
             or click to browse(.zip only)
           </p>
-          <Button variant={"outline"}>Select File</Button>
+          <Button variant={"outline"} type="button">
+            Select File
+          </Button>
         </div>
       )}
     </div>
