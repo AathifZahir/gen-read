@@ -45,8 +45,7 @@ export default function Generator() {
     e.preventDefault();
     if (url) {
       console.log("url", url);
-    }
-    if (file) {
+    } else if (file) {
       console.log("file", file);
     }
 
